@@ -91,5 +91,61 @@ namespace RedMango_API.Controllers
                 return _response;
 
         }
+
+
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<ApiResponse>> UpdateMenuItem(int id, [FromForm]MenuItemUpdateDto menuItemUpdateDto)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    if (menuItemUpdateDto == null || id != menuItemUpdateDto.Id)
+                    {
+                        return BadRequest();
+                    }
+
+                   
+
+                    MenuItem menuItemFromDb = await _db.MenuItems.FindAsync(id);
+                    if (menuItemFromDb == null)
+                    {
+                        return NotFound();
+                    }
+
+                    menuItemFromDb.Id = menuItemUpdateDto.Id;
+                    menuItemFromDb.Name = menuItemUpdateDto.Name;
+                    menuItemFromDb.Price = menuItemUpdateDto.Price;
+                    menuItemFromDb.Category = menuItemUpdateDto.Category;
+                    menuItemFromDb.SpecialTag = menuItemUpdateDto.SpecialTag;
+                    menuItemFromDb.Description = menuItemUpdateDto.Description;
+
+                    if (menuItemUpdateDto.File!= null || menuItemUpdateDto.File.Length > 0)
+                    {
+                        string fileName = $"{Guid.NewGuid()}{Path.GetExtension(menuItemUpdateDto.File.FileName)}";
+                        await _blobService.DeleteBlob(menuItemFromDb.Image.Split("/").Last(), SD.SD_Storage_Container);
+                        menuItemFromDb.Image = await _blobService.UploadBlob(fileName, SD.SD_Storage_Container, menuItemUpdateDto.File);
+                    }
+
+                    
+
+                    
+
+                    _db.MenuItems.Update(menuItemFromDb);
+                    _db.SaveChanges();
+                    _response.StatusCode = HttpStatusCode.NoContent;
+                    return Ok(_response);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.ErrorMessages.Add(ex.Message);
+            }
+            return _response;
+
+        }
     }
 }

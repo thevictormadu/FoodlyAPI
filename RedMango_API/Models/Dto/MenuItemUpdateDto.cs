@@ -4,6 +4,7 @@ namespace RedMango_API.Models.Dto
 {
     public class MenuItemUpdateDto
     {
+        public int Id { get; set; }
         [Required]
         public string Name { get; set; }
         public string Description { get; set; }
@@ -11,6 +12,6 @@ namespace RedMango_API.Models.Dto
         public string Category { get; set; }
         [Range(1, int.MaxValue)]
         public double Price { get; set; }
-        public FormFile File { get; set; }
+        public IFormFile File { get; set; }
     }
 }
