@@ -37,6 +37,7 @@ namespace RedMango_API.Controllers
             if (id == 0)
             {
                 _response.StatusCode= HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
                 return BadRequest(_response);
             }
 
@@ -45,10 +46,12 @@ namespace RedMango_API.Controllers
             if (menuItem == null)
             {
                 _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = false;
                 return NotFound(_response);
             }
             _response.Result = menuItem;
             _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess= true;
             return Ok(_response);
         }
 
@@ -61,6 +64,8 @@ namespace RedMango_API.Controllers
                 {
                     if (menuItemCreateDto.File == null || menuItemCreateDto.File.Length == 0)
                     {
+                        _response.StatusCode = HttpStatusCode.BadRequest;
+                        _response.IsSuccess = false;
                         return BadRequest();
                     }
                     string fileName = $"{Guid.NewGuid()}{Path.GetExtension(menuItemCreateDto.File.FileName)}";
@@ -77,6 +82,7 @@ namespace RedMango_API.Controllers
                     _db.MenuItems.Add(newMenuItem);
                     _db.SaveChanges();
                     _response.Result = newMenuItem;
+                    _response.IsSuccess = true;
                     _response.StatusCode = HttpStatusCode.Created;
                     return CreatedAtRoute("GetMenuItem", new { id = newMenuItem.Id }, _response);
                 }
@@ -102,6 +108,8 @@ namespace RedMango_API.Controllers
                 {
                     if (menuItemUpdateDto == null || id != menuItemUpdateDto.Id)
                     {
+                        _response.StatusCode = HttpStatusCode.BadRequest;
+                        _response.IsSuccess = false;
                         return BadRequest();
                     }
 
@@ -110,6 +118,8 @@ namespace RedMango_API.Controllers
                     MenuItem menuItemFromDb = await _db.MenuItems.FindAsync(id);
                     if (menuItemFromDb == null)
                     {
+                        _response.StatusCode = HttpStatusCode.NotFound;
+                        _response.IsSuccess = false;
                         return NotFound();
                     }
 
@@ -133,6 +143,7 @@ namespace RedMango_API.Controllers
 
                     _db.MenuItems.Update(menuItemFromDb);
                     _db.SaveChanges();
+                    _response.IsSuccess = true;
                     _response.StatusCode = HttpStatusCode.NoContent;
                     return Ok(_response);
                 }
@@ -155,6 +166,8 @@ namespace RedMango_API.Controllers
             {
                 if (id == 0)
                 {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
                     return BadRequest();
                 }
 
@@ -162,6 +175,8 @@ namespace RedMango_API.Controllers
 
                 if (menuItemFromDb == null)
                 {
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.IsSuccess = false;
                     return NotFound();
                 }
 
@@ -173,6 +188,7 @@ namespace RedMango_API.Controllers
                 _db.MenuItems.Remove(menuItemFromDb);
                 _db.SaveChanges();
                 _response.StatusCode = HttpStatusCode.NoContent;
+                _response.IsSuccess = true;
                 return Ok(_response);
 
             }
