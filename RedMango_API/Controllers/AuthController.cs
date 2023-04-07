@@ -11,7 +11,7 @@ using System.Net;
 
 namespace RedMango_API.Controllers
 {
-    [Route("api/[auth]")]
+    [Route("api/Auth")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -35,9 +35,9 @@ namespace RedMango_API.Controllers
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] RegisterRequestDto model)
         {
-            try
-            {
-                ApplicationUser userFromDb = _db.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == model.UserName.ToLower());
+            
+                ApplicationUser userFromDb = _db.ApplicationUsers
+                .FirstOrDefault(u => u.UserName.ToLower() == model.UserName.ToLower());
 
                 if (userFromDb != null)
                 {
@@ -57,11 +57,14 @@ namespace RedMango_API.Controllers
                     Name = model.Name,
                 };
 
+            try
+            {
+
                 var result = await _userManager.CreateAsync(newUser, model.Password);
 
                 if (result.Succeeded)
                 {
-                    if (_roleManager.RoleExistsAsync(SD.Role_Admin).GetAwaiter().GetResult())
+                    if (!_roleManager.RoleExistsAsync(SD.Role_Admin).GetAwaiter().GetResult())
                     {
                         //create roles in database
                         await _roleManager.CreateAsync(new IdentityRole(SD.Role_Admin));
@@ -70,11 +73,11 @@ namespace RedMango_API.Controllers
 
                     if (model.Role.ToLower() == SD.Role_Admin)
                     {
-                        _userManager.AddToRoleAsync(newUser, SD.Role_Admin);
+                        await _userManager.AddToRoleAsync(newUser, SD.Role_Admin);
                     }
                     else
                     {
-                        _userManager.AddToRoleAsync(newUser, SD.Role_Customer);
+                        await _userManager.AddToRoleAsync(newUser, SD.Role_Customer);
                     }
 
                     _response.StatusCode = HttpStatusCode.OK;
@@ -83,20 +86,19 @@ namespace RedMango_API.Controllers
 
                 }
 
-                _response.IsSuccess = false;
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.ErrorMessages.Add("Error While Registering");
-                return BadRequest(_response);
+                
 
             }
             catch (Exception ex)
             {
-                _response.IsSuccess = false;
-                _response.StatusCode= HttpStatusCode.BadRequest;
-                _response.ErrorMessages.Add(ex.Message);
-                return BadRequest(_response);
+               return BadRequest(ex.Message);
 
             }
+
+            _response.IsSuccess = false;
+            _response.StatusCode = HttpStatusCode.BadRequest;
+            _response.ErrorMessages.Add("Registration Was Not Successful");
+            return BadRequest(_response);
 
 
         }
