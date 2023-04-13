@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RedMango_API.Utility;
 
 namespace RedMango_API.Controllers
 {
@@ -16,6 +17,7 @@ namespace RedMango_API.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [Authorize(Roles = SD.Role_Admin)]
         public async Task<ActionResult<string>> GetSomething(int someIntValue)
         {
             return "you are authorized with role of admin";
