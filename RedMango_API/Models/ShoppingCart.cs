@@ -10,7 +10,7 @@ namespace RedMango_API.Models
         public ICollection<CartItem> CartItems { get; set; }
 
         [NotMapped]
-        public double CardTotal { get; set; }
+        public double CartTotal { get; set; }
         [NotMapped]
         public string StripePaymentIntentId { get; set; }
         [NotMapped]
