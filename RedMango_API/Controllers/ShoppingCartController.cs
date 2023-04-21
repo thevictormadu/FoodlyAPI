@@ -26,7 +26,7 @@ namespace RedMango_API.Controllers
         [HttpPost]
         public async Task<ActionResult<ApiResponse>> AddOrUpdateItemInCart(string userId, int menuItemId, int updateQuantity)
         {
-            ShoppingCart shoppingCart = _db.ShoppingCarts.Include(u => u.CartItems).FirstOrDefault(u => u.UserId== userId);
+            ShoppingCart shoppingCart = await _db.ShoppingCarts.Include(u => u.CartItems).FirstOrDefaultAsync(u => u.UserId== userId);
             var menuItems = _db.MenuItems.FirstOrDefault(u => u.Id== menuItemId);
 
             if (menuItems== null)
@@ -76,7 +76,7 @@ namespace RedMango_API.Controllers
                 {
                     //item exist in the cart and we have to update quantity
                     int newQuantity = cartIteminCart.Quantity + updateQuantity; 
-                    if (newQuantity <= 0) 
+                    if (updateQuantity == 0 || newQuantity <= 0) 
                     { 
                         _db.CartItems.Remove(cartIteminCart);
                         if (shoppingCart.CartItems.Count() == 1)
