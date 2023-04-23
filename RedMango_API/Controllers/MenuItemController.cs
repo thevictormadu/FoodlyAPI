@@ -16,11 +16,12 @@ namespace RedMango_API.Controllers
         private readonly ApplicationDbContext _db;
         private ApiResponse _response;
         private readonly IBlobService _blobService;
+
         public MenuItemController(ApplicationDbContext db, IBlobService blobService)
         {
-            _db= db;
-            _response= new ApiResponse(); 
-            _blobService= blobService;
+            _db = db;
+            _response = new ApiResponse();
+            _blobService = blobService;
         }
 
         [HttpGet]
@@ -36,7 +37,7 @@ namespace RedMango_API.Controllers
         {
             if (id == 0)
             {
-                _response.StatusCode= HttpStatusCode.BadRequest;
+                _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
                 return BadRequest(_response);
             }
@@ -51,12 +52,12 @@ namespace RedMango_API.Controllers
             }
             _response.Result = menuItem;
             _response.StatusCode = HttpStatusCode.OK;
-            _response.IsSuccess= true;
+            _response.IsSuccess = true;
             return Ok(_response);
         }
 
         [HttpPost]
-        public async Task<ActionResult<ApiResponse>> CreateMenuItem([FromForm]MenuItemCreateDto menuItemCreateDto)
+        public async Task<ActionResult<ApiResponse>> CreateMenuItem([FromForm] MenuItemCreateDto menuItemCreateDto)
         {
             try
             {
@@ -86,7 +87,6 @@ namespace RedMango_API.Controllers
                     _response.StatusCode = HttpStatusCode.Created;
                     return CreatedAtRoute("GetMenuItem", new { id = newMenuItem.Id }, _response);
                 }
-
             }
             catch (Exception ex)
             {
@@ -94,13 +94,11 @@ namespace RedMango_API.Controllers
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.ErrorMessages.Add(ex.Message);
             }
-                return _response;
-
+            return _response;
         }
 
-
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<ApiResponse>> UpdateMenuItem(int id, [FromForm]MenuItemUpdateDto menuItemUpdateDto)
+        public async Task<ActionResult<ApiResponse>> UpdateMenuItem(int id, [FromForm] MenuItemUpdateDto menuItemUpdateDto)
         {
             try
             {
@@ -112,8 +110,6 @@ namespace RedMango_API.Controllers
                         _response.IsSuccess = false;
                         return BadRequest();
                     }
-
-                   
 
                     MenuItem menuItemFromDb = await _db.MenuItems.FindAsync(id);
                     if (menuItemFromDb == null)
@@ -130,16 +126,12 @@ namespace RedMango_API.Controllers
                     menuItemFromDb.SpecialTag = menuItemUpdateDto.SpecialTag;
                     menuItemFromDb.Description = menuItemUpdateDto.Description;
 
-                    if (menuItemUpdateDto.File!= null || menuItemUpdateDto.File.Length > 0)
+                    if (menuItemUpdateDto.File != null || menuItemUpdateDto.File.Length > 0)
                     {
                         string fileName = $"{Guid.NewGuid()}{Path.GetExtension(menuItemUpdateDto.File.FileName)}";
                         await _blobService.DeleteBlob(menuItemFromDb.Image.Split("/").Last(), SD.SD_Storage_Container);
                         menuItemFromDb.Image = await _blobService.UploadBlob(fileName, SD.SD_Storage_Container, menuItemUpdateDto.File);
                     }
-
-                    
-
-                    
 
                     _db.MenuItems.Update(menuItemFromDb);
                     _db.SaveChanges();
@@ -147,7 +139,6 @@ namespace RedMango_API.Controllers
                     _response.StatusCode = HttpStatusCode.NoContent;
                     return Ok(_response);
                 }
-
             }
             catch (Exception ex)
             {
@@ -156,7 +147,6 @@ namespace RedMango_API.Controllers
                 _response.ErrorMessages.Add(ex.Message);
             }
             return _response;
-
         }
 
         [HttpDelete("{id:int}")]
@@ -190,7 +180,6 @@ namespace RedMango_API.Controllers
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.IsSuccess = true;
                 return Ok(_response);
-
             }
             catch (Exception ex)
             {
@@ -199,7 +188,6 @@ namespace RedMango_API.Controllers
                 _response.ErrorMessages.Add(ex.Message);
             }
             return _response;
-
         }
     }
 }

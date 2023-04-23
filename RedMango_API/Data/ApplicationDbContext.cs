@@ -8,17 +8,17 @@ namespace RedMango_API.Data
     {
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
-
         }
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<MenuItem> MenuItems { get; set; }
         public DbSet<ShoppingCart> ShoppingCarts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<OrderHeader> OrderHeaders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<MenuItem>().HasData(
                 new MenuItem
@@ -111,7 +111,6 @@ namespace RedMango_API.Data
                     Price = 3.99,
                     Category = "Dessert",
                     SpecialTag = "Top Rated"
-
                 });
         }
     }
