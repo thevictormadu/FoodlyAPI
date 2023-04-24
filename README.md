@@ -1,33 +1,30 @@
-# Foodly
+# Foodly API
 
-This is a food ecommerce website that allows users to purchase food and food items online. The website has a variety of features including:
+This is the API for a web application for ordering food built with ASP.net and integrated with Stripe for payment processing. It provides endpoints for managing food items, orders, and payments.
 
-- A search bar that allows users to search for specific food items
-- A shopping cart that keeps track of the items that the user has added to their cart
-- A checkout page that allows users to enter their payment information and complete their purchase (hoping to integrate Stripe payment)
-- A user account page that allows users to view their order history and update their account information
+## Installation
 
-## Getting Started
+To run the application, you will need to have [.NET 7 SDK](https://dotnet.microsoft.com/download) installed on your computer.
 
-To get started with this project, you will need to clone the repository and install the necessary dependencies.
+Clone the repository to your local machine:
 
 ```
-git clone https://github.com/thevictormadu/react_RedMango_API.git
-cd repo-name
+git clone https://github.com/thevictormadu/foodlyapi.git
 ```
-## Technologies
 
-install all dependencies.
-- .Net -Server side
-- React.js -Client Side
+Navigate to the root directory and create a `appsetting.json` file with the following contents:
 
+```
+STRIPE_SECRET_KEY=your_stripe_secret_key
+```
 
-## Contributing
+Replace `your_stripe_secret_key` with your Stripe secret key.
 
-If you would like to contribute to this project, please open an issue or submit a pull request.
+Then, run the following command to start the server:
 
-## License
+```
+dotnet run
+```
 
-This project is a work in progress and will hopefully be deployed.
+The application will then be available at `http://localhost:5000`.
 
-I hope this helps! Let me know if you have any other questions. 😊
